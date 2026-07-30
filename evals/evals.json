@@ -1,0 +1,50 @@
+[
+  {
+    "id": "positive_cad_to_fem",
+    "type": "positive",
+    "prompt": "把这个芯片从 CAD 走到网格、FEM 仿真、ParaView 验证和报告。",
+    "should_trigger": true,
+    "expected_route": "cad-fem-router -> general-fem -> result-verification -> simulation-report",
+    "expected_behavior": "Create TaskBrief and RoutePlan; keep CLI default; return RunSummary and EvidenceReport."
+  },
+  {
+    "id": "positive_microfluidic_vof",
+    "type": "positive",
+    "prompt": "用 OpenFOAM 做 T-junction 的 GelMA/oil 液滴 VOF，并判断液滴是否脱落。",
+    "should_trigger": true,
+    "expected_route": "chip-simulation-router -> microfluidic-cfd",
+    "expected_behavior": "Require source-field and connected-component evidence; do not treat interpolation as physics evidence."
+  },
+  {
+    "id": "boundary_fenics_special_physics",
+    "type": "boundary",
+    "prompt": "我需要电动输运的特殊 PDE，并希望用 FEniCS 做验证。",
+    "should_trigger": true,
+    "expected_route": "cad-fem-router -> microfluidic-special-physics",
+    "expected_behavior": "Do not silently substitute routine single-phase OpenFOAM."
+  },
+  {
+    "id": "boundary_report_consumer",
+    "type": "boundary",
+    "prompt": "我已经有 analysis bundle，只需要整理成 PPT 和 Markdown。",
+    "should_trigger": true,
+    "expected_route": "simulation-report-router -> simulation-report",
+    "expected_behavior": "Consume the bundle; do not rerun or choose a solver."
+  },
+  {
+    "id": "negative_generic_cad",
+    "type": "negative",
+    "prompt": "帮我写一封普通的项目进度邮件。",
+    "should_trigger": false,
+    "expected_route": "normal task handling",
+    "expected_behavior": "Do not load the CAD simulation facade."
+  },
+  {
+    "id": "regression_missing_runtime",
+    "type": "regression",
+    "prompt": "运行这个 FEniCS 仿真，但 fenics-agent 不在环境中。",
+    "should_trigger": true,
+    "expected_route": "general-fem",
+    "expected_behavior": "Return blocked with missing runtime and recovery action; never fabricate success."
+  }
+]

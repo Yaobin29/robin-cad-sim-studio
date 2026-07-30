@@ -1,0 +1,28 @@
+{
+  "template_id": "t-junction-filled-left-water",
+  "description": "Validated local T-junction microdroplet template: left water/GelMA reservoir, narrowed nozzle, top/bottom oil squeeze channels, right outlet.",
+  "source": "compatibility mirror of the node-local template; solver scripts remain outside this portable plugin",
+  "default_parameters": {
+    "water_flow_ul_min": 20,
+    "oil_flows_ul_min": [60, 90, 120, 150, 180, 220],
+    "gelma_wt_percent": 5,
+    "depth_mm": 0.3,
+    "water_reservoir_xmin_mm": -2.0,
+    "water_reservoir_xmax_mm": -0.6,
+    "water_reservoir_half_height_mm": 0.2,
+    "nozzle_half_height_mm": 0.06,
+    "oil_half_width_mm": 0.1,
+    "oil_half_height_mm": 1.2,
+    "outlet_xmax_mm": 3.0,
+    "outlet_half_height_mm": 0.15,
+    "sigma_n_m": 0.008,
+    "contact_angle_deg": 110,
+    "end_time_s": 0.06,
+    "write_interval_s": 0.002,
+    "video_aspect_ratio": "16:9"
+  },
+  "evidence_thresholds": {
+    "interface_envelope_alpha": 0.25,
+    "high_water_core_alpha": 0.5
+  }
+}

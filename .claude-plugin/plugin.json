@@ -1,0 +1,12 @@
+{
+  "name": "robin-cad-sim-studio",
+  "version": "0.2.0",
+  "description": "Portable CAD-to-simulation studio facade with shared task, routing, evidence, and cross-agent contracts.",
+  "author": {
+    "name": "Wu Yaobin",
+    "email": "Yaobin29@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/Yaobin29/robin-cad-sim-studio",
+  "repository": "https://github.com/Yaobin29/robin-cad-sim-studio",
+  "license": "MIT"
+}

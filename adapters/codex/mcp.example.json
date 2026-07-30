@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "fusion360_mcp": {
+      "command": "robin-cad-sim-fusion360-mcp",
+      "args": [],
+      "note": "Register only when a node-local live Fusion 360 bridge is installed and the session is explicitly interactive."
+    }
+  }
+}

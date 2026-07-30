@@ -1,0 +1,26 @@
+name: Validate plugin
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  portable-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate contracts
+        run: python3 scripts/validate-contracts
+      - name: Discover backend commands
+        run: python3 scripts/discover-backends
+      - name: Validate Claude package shape
+        run: python3 scripts/package-cross-agent --dry-run
+      - name: Compile adapter scripts
+        run: python3 -m py_compile adapters/hermes/*.py scripts/validate-contracts scripts/discover-backends scripts/package-cross-agent
+      - name: Check JSON manifests
+        run: python3 -c "import json; [json.load(open(p)) for p in ['.codex-plugin/plugin.json', '.claude-plugin/plugin.json', '.mcp.json']]"

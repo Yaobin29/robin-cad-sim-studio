@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "robin-cad-sim-studio/task-brief.schema.json",
+  "title": "Robin CAD Sim Studio TaskBrief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "task_id", "objective", "problem_type", "requested_outputs"],
+  "properties": {
+    "contract_version": {"const": "robin-cad-sim-studio.task-brief.v1"},
+    "task_id": {"type": "string", "minLength": 1},
+    "objective": {"type": "string", "minLength": 1},
+    "problem_type": {"enum": ["WHY", "HOW", "MIX"]},
+    "geometry": {"type": "object"},
+    "materials": {"type": "object"},
+    "boundary_conditions": {"type": "object"},
+    "physics": {"type": "object"},
+    "constraints": {"type": "object"},
+    "requested_outputs": {"type": "array", "items": {"type": "string"}},
+    "credibility_requirements": {"type": "array", "items": {"type": "string"}},
+    "input_paths": {"type": "array", "items": {"type": "string"}}
+  }
+}

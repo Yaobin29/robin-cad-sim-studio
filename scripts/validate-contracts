@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Validate the portable contract schemas and optional contract instances."""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CONTRACTS = {
+    "task-brief": ROOT / "contracts" / "task-brief.schema.json",
+    "route-plan": ROOT / "contracts" / "route-plan.schema.json",
+    "run-summary": ROOT / "contracts" / "run-summary.schema.json",
+    "evidence-report": ROOT / "contracts" / "evidence-report.schema.json",
+}
+
+
+class ValidationError(ValueError):
+    pass
+
+
+def validate(instance: Any, schema: dict[str, Any], path: str = "$", *, root_schema: dict[str, Any] | None = None) -> None:
+    root_schema = root_schema or schema
+    expected_type = schema.get("type")
+    if expected_type == "object" and not isinstance(instance, dict):
+        raise ValidationError(f"{path}: expected object")
+    if expected_type == "array" and not isinstance(instance, list):
+        raise ValidationError(f"{path}: expected array")
+    if expected_type == "string" and not isinstance(instance, str):
+        raise ValidationError(f"{path}: expected string")
+    if expected_type == "boolean" and not isinstance(instance, bool):
+        raise ValidationError(f"{path}: expected boolean")
+    if "const" in schema and instance != schema["const"]:
+        raise ValidationError(f"{path}: expected {schema['const']!r}")
+    if "enum" in schema and instance not in schema["enum"]:
+        raise ValidationError(f"{path}: expected one of {schema['enum']!r}")
+    if isinstance(instance, str) and len(instance) < schema.get("minLength", 0):
+        raise ValidationError(f"{path}: string is shorter than minLength")
+    if isinstance(instance, list) and "items" in schema:
+        for index, item in enumerate(instance):
+            validate(item, schema["items"], f"{path}[{index}]", root_schema=root_schema)
+    if isinstance(instance, dict):
+        missing = [key for key in schema.get("required", []) if key not in instance]
+        if missing:
+            raise ValidationError(f"{path}: missing required keys {missing!r}")
+        properties = schema.get("properties", {})
+        if schema.get("additionalProperties") is False:
+            unknown = sorted(set(instance) - set(properties))
+            if unknown:
+                raise ValidationError(f"{path}: unknown keys {unknown!r}")
+        for key, value in instance.items():
+            if key in properties:
+                validate(value, properties[key], f"{path}.{key}", root_schema=root_schema)
+
+
+def load_schemas() -> dict[str, dict[str, Any]]:
+    loaded: dict[str, dict[str, Any]] = {}
+    for name, path in CONTRACTS.items():
+        if not path.exists():
+            raise ValidationError(f"missing contract schema: {path}")
+        try:
+            schema = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise ValidationError(f"invalid JSON in {path}: {exc}") from exc
+        if schema.get("type") != "object" or not schema.get("required"):
+            raise ValidationError(f"{path}: schema must define an object and required fields")
+        loaded[name] = schema
+    return loaded
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Validate Robin CAD Sim Studio contracts.")
+    parser.add_argument("--contract", choices=sorted(CONTRACTS), help="Contract name for --file.")
+    parser.add_argument("--file", type=Path, help="Optional JSON instance to validate.")
+    args = parser.parse_args()
+    try:
+        schemas = load_schemas()
+        if args.file:
+            if not args.contract:
+                parser.error("--contract is required with --file")
+            instance = json.loads(args.file.read_text(encoding="utf-8"))
+            validate(instance, schemas[args.contract])
+        payload = {"status": "ok", "contracts": sorted(schemas)}
+        if args.file:
+            payload.update({"contract": args.contract, "file": str(args.file), "instance_status": "valid"})
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        return 0
+    except (OSError, json.JSONDecodeError, ValidationError) as exc:
+        print(json.dumps({"status": "blocked", "error": str(exc)}, ensure_ascii=False, indent=2), file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

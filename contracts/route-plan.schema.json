@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "robin-cad-sim-studio/route-plan.schema.json",
+  "title": "Robin CAD Sim Studio RoutePlan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "task_id", "branch", "backends", "verification", "fallback_policy"],
+  "properties": {
+    "contract_version": {"const": "robin-cad-sim-studio.route-plan.v1"},
+    "task_id": {"type": "string", "minLength": 1},
+    "branch": {"enum": ["general-fem", "microfluidic-cfd", "microfluidic-special-physics", "result-verification", "simulation-report"]},
+    "backends": {"type": "array", "items": {"type": "string"}},
+    "mcp_required": {"type": "boolean", "default": false},
+    "verification": {"type": "array", "items": {"type": "string"}},
+    "fallback_policy": {"enum": ["allow", "deny", "blocked-on-missing-runtime"]},
+    "output_root": {"type": "string"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

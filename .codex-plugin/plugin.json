@@ -1,0 +1,50 @@
+{
+  "name": "robin-cad-sim-studio",
+  "version": "0.2.0",
+  "description": "Portable CAD-to-simulation studio facade with shared task, routing, evidence, and cross-agent contracts.",
+  "author": {
+    "name": "Wu Yaobin",
+    "email": "Yaobin29@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/Yaobin29/robin-cad-sim-studio",
+  "repository": "https://github.com/Yaobin29/robin-cad-sim-studio",
+  "license": "MIT",
+  "keywords": [
+    "cad",
+    "mesh",
+    "fem",
+    "cfd",
+    "openfoam",
+    "fenics",
+    "ngsolve",
+    "paraview",
+    "microfluidics",
+    "agent-skills",
+    "cross-agent"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Robin CAD Sim Studio",
+    "shortDescription": "One entry point from CAD and mesh through simulation, verification, and reporting.",
+    "longDescription": "A portable facade plugin for Codex, Claude, Hermes, and Pi-style hosts. It owns scientific problem framing, workflow selection, verification gates, output organization, and shared JSON contracts while delegating deterministic execution to existing CLI backends and optional live MCP bridges.",
+    "developerName": "Wu Yaobin",
+    "category": "Research",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Interactive",
+      "Analysis",
+      "MCP"
+    ],
+    "websiteURL": "https://github.com/Yaobin29/robin-cad-sim-studio",
+    "defaultPrompt": [
+      "Run the smallest credible CAD to mesh to simulation workflow for this biomedical device.",
+      "Route this microfluidic chip request through OpenFOAM, FEniCS special physics, and verification as needed.",
+      "Verify these existing XDMF or VTK simulation results and prepare a report-ready evidence bundle.",
+      "Use the same CAD-to-simulation route in Codex, Claude, or Hermes."
+    ],
+    "brandColor": "#0F766E",
+    "screenshots": []
+  }
+}

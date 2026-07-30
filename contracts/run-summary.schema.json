@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "robin-cad-sim-studio/run-summary.schema.json",
+  "title": "Robin CAD Sim Studio RunSummary",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["contract_version", "run_id", "status", "branch", "backend", "input_paths", "output_paths", "metrics", "assumptions", "known_limits", "verification_status"],
+  "properties": {
+    "contract_version": {"const": "robin-cad-sim-studio.run-summary.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["ok", "partial", "blocked"]},
+    "branch": {"type": "string", "minLength": 1},
+    "backend": {"type": "string", "minLength": 1},
+    "input_paths": {"type": "array", "items": {"type": "string"}},
+    "output_paths": {"type": "array", "items": {"type": "string"}},
+    "metrics": {"type": "object"},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "known_limits": {"type": "array", "items": {"type": "string"}},
+    "verification_status": {"enum": ["not-run", "partial", "passed", "failed", "blocked"]},
+    "next_action": {"type": "string"},
+    "error": {"type": "string"}
+  }
+}

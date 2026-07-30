@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "robin-cad-sim-studio/evidence-report.schema.json",
+  "title": "Robin CAD Sim Studio EvidenceReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "run_id", "direct_evidence", "visual_evidence", "interpretation", "validation_status", "unresolved_questions", "next_action"],
+  "properties": {
+    "contract_version": {"const": "robin-cad-sim-studio.evidence-report.v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "direct_evidence": {"type": "array", "items": {"type": "string"}},
+    "visual_evidence": {"type": "array", "items": {"type": "string"}},
+    "proxy_interpretation": {"type": "array", "items": {"type": "string"}},
+    "interpretation": {"type": "array", "items": {"type": "string"}},
+    "validation_status": {"enum": ["not-validated", "partial", "validated", "blocked"]},
+    "unresolved_questions": {"type": "array", "items": {"type": "string"}},
+    "next_action": {"type": "string", "minLength": 1}
+  }
+}

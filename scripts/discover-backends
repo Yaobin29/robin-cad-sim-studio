@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""Discover command wiring without claiming that a backend is runtime-healthy."""
+from __future__ import annotations
+
+import json
+import os
+import shutil
+
+
+BACKENDS = {
+    "cad": ["freecad-agent", "blender-agent", "forgecad-agent"],
+    "fem": ["fenics-agent", "ngsolve-agent"],
+    "cfd": ["openfoam-agent"],
+    "render": ["paraview-agent"],
+}
+
+
+def main() -> int:
+    payload = {
+        "status": "ok",
+        "discovery_only": True,
+        "workspace": os.environ.get("ROBIN_AI_ROOT", ""),
+        "backends": {},
+        "notes": [
+            "command presence is a packaging/discoverability smoke check",
+            "run backend-specific health and runtime checks before scientific claims",
+        ],
+    }
+    for family, commands in BACKENDS.items():
+        payload["backends"][family] = [
+            {"command": command, "available": shutil.which(command) is not None, "path": shutil.which(command)}
+            for command in commands
+        ]
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

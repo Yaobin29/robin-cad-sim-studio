@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""Build a clean Claude-compatible .plugin archive from the portable source tree."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import zipfile
+from pathlib import Path
+
+
+EXCLUDED_DIRS = {".git", ".codex-plugin", "__pycache__", ".pytest_cache"}
+EXCLUDED_NAMES = {".DS_Store"}
+EXCLUDED_SUFFIXES = {".plugin", ".zip"}
+
+
+def repo_root(plugin_root: Path) -> Path:
+    for candidate in (plugin_root, *plugin_root.parents):
+        if (candidate / "AGENTS.md").exists():
+            return candidate
+    return Path.cwd()
+
+
+def validate_manifests(plugin_root: Path) -> None:
+    for relative in (Path(".codex-plugin/plugin.json"), Path(".claude-plugin/plugin.json")):
+        path = plugin_root / relative
+        if not path.exists():
+            raise SystemExit(f"missing manifest: {path}")
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if payload.get("name") != plugin_root.name:
+            raise SystemExit(f"manifest name mismatch in {path}")
+    if not (plugin_root / "skills").is_dir():
+        raise SystemExit(f"missing skills directory: {plugin_root / 'skills'}")
+
+
+def files_for_archive(plugin_root: Path) -> list[Path]:
+    files: list[Path] = []
+    for path in sorted(plugin_root.rglob("*")):
+        if not path.is_file():
+            continue
+        relative_parts = path.relative_to(plugin_root).parts
+        if any(part in EXCLUDED_DIRS for part in relative_parts):
+            continue
+        if path.name in EXCLUDED_NAMES or path.suffix in EXCLUDED_SUFFIXES:
+            continue
+        files.append(path)
+    return files
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Package Robin CAD Sim Studio for Claude and other hosts.")
+    parser.add_argument("--plugin-root", type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+    plugin_root = args.plugin_root.expanduser().resolve()
+    validate_manifests(plugin_root)
+    files = files_for_archive(plugin_root)
+    output_dir = (args.output_dir or repo_root(plugin_root) / "outputs" / plugin_root.name).expanduser().resolve()
+    archive_path = output_dir / f"{plugin_root.name}.plugin"
+    relative_files = [f.relative_to(plugin_root).as_posix() for f in files]
+    if args.dry_run:
+        print(json.dumps({"status": "ok", "dry_run": True, "archive": str(archive_path), "files": relative_files}, ensure_ascii=False, indent=2))
+        return 0
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for path in files:
+            archive.write(path, f"{plugin_root.name}/{path.relative_to(plugin_root).as_posix()}")
+    print(json.dumps({"status": "ok", "archive": str(archive_path), "file_count": len(files)}, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
