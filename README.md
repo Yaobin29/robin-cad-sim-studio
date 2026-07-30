@@ -170,4 +170,6 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md). Changes to routing behavior should inc
 
 ## License
 
-MIT. See [`LICENSE`](LICENSE).
+Source-available under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0). Personal, academic, educational, public-research, and other noncommercial use is permitted under the license.
+
+Commercial use, commercial distribution, paid client work, embedding in a revenue-generating product or service, or another commercial purpose requires separate written permission or a commercial license from the copyright holder. This is not an OSI-approved Open Source license because commercial use is restricted. See [`LICENSE`](LICENSE).
