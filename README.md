@@ -2,6 +2,8 @@
 
 [![Validate plugin](https://github.com/Yaobin29/robin-cad-sim-studio/actions/workflows/validate.yml/badge.svg)](https://github.com/Yaobin29/robin-cad-sim-studio/actions/workflows/validate.yml)
 
+![Robin CAD Sim Studio — from geometry to verified evidence](assets/robin-cad-sim-studio-hero.png)
+
 Portable CAD-to-simulation workflow plugin for Codex, Claude, Hermes, and Pi-style agent hosts.
 
 Robin CAD Sim Studio gives an agent one memorable entry point for:
